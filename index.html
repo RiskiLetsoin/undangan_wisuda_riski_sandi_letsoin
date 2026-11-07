@@ -58,6 +58,8 @@
             height: 100%;
             height: 100dvh;
             min-height: 0;
+            position: relative;
+            overflow: hidden;
         }
 
         .invitation[data-palette="hunter"] {
@@ -148,6 +150,100 @@
                 0 8px 24px rgb(0 0 0 / 20%),
                 6px 0 18px rgb(0 0 0 / 18%),
                 inset 0 1px 0 rgb(255 255 255 / 8%);
+        }
+
+        .invitation-cover {
+            position: absolute;
+            z-index: 5;
+            inset: 0;
+            display: flex;
+            min-width: 0;
+            min-height: 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(12px, 2.4vh, 20px);
+            overflow-y: auto;
+            padding: clamp(20px, 5vh, 48px) clamp(18px, 6vw, 64px);
+            border: 0;
+            background-color: var(--panel-background);
+            background-image:
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.9'/%3E%3C/svg%3E"),
+                linear-gradient(150deg, var(--fixed-background), var(--panel-background));
+            background-size: 120px 120px, auto;
+            background-blend-mode: soft-light, normal;
+            color: var(--text);
+            box-shadow:
+                0 8px 24px rgb(0 0 0 / 20%),
+                inset 0 1px 0 rgb(255 255 255 / 8%);
+            transform: translateX(0);
+            transition: transform 5s cubic-bezier(.65, 0, .35, 1);
+            will-change: transform;
+        }
+
+        .invitation.is-opening .invitation-cover {
+            pointer-events: none;
+            transform: translateX(-100%);
+        }
+
+        .invitation-cover .open-invitation {
+            flex: 0 0 auto;
+        }
+
+        .cover-mark {
+            display: grid;
+            flex: 0 0 auto;
+            justify-items: center;
+            gap: 4px;
+            color: var(--quiet);
+        }
+
+        .graduation-cap {
+            width: 34px;
+            height: 26px;
+        }
+
+        .invitation-cover .quote {
+            position: relative;
+            width: min(100%, 500px);
+            flex: 0 0 auto;
+            padding: clamp(24px, 4vw, 36px);
+            border: 1px solid var(--line);
+            background: rgb(255 255 255 / 2%);
+            box-shadow:
+                0 14px 36px rgb(0 0 0 / 18%),
+                inset 0 1px 0 rgb(255 255 255 / 5%);
+        }
+
+        .invitation-cover .quote::before {
+            position: absolute;
+            inset: 7px;
+            border: 1px solid color-mix(in srgb, var(--line), transparent 35%);
+            content: "";
+            pointer-events: none;
+        }
+
+        .open-invitation {
+            align-self: center;
+            min-height: 44px;
+            padding: 10px 24px;
+            border: 1px solid var(--quiet);
+            border-radius: 999px;
+            background: var(--control-background);
+            color: var(--text);
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgb(0 0 0 / 18%);
+            transition: opacity .25s ease, visibility .25s ease;
+        }
+
+        .invitation.is-opening .open-invitation {
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
         }
 
         .fixed-heading,
@@ -516,27 +612,29 @@
         }
 
         .quote {
-            padding: clamp(24px, 5vh, 48px) 8px;
-            border-top: 1px solid var(--line);
-            border-bottom: 1px solid var(--line);
-            color: var(--text);
+            margin: 0;
+            padding: 0 8px;
+            border: 0;
+            background: none;
+            box-shadow: none;
+            color: var(--muted);
             text-align: center;
         }
 
         .quote p {
             margin: 0;
             font-family: "Cormorant Garamond", Georgia, serif;
-            font-size: clamp(14px, 2vw, 22px);
+            font-size: clamp(13px, 1.6vw, 17px);
             font-style: italic;
             font-weight: 400;
             letter-spacing: .04em;
-            line-height: 1.8;
+            line-height: 1.55;
         }
 
         .quote cite {
             display: block;
-            margin-top: 14px;
-            color: var(--muted);
+            margin-top: 6px;
+            color: var(--quiet);
             font-size: clamp(8px, 1vw, 11px);
             font-style: normal;
             letter-spacing: .18em;
@@ -855,13 +953,33 @@
             *::before,
             *::after {
                 scroll-behavior: auto !important;
+                transition-duration: .01ms !important;
             }
         }
     </style>
 </head>
 <body>
-    <main class="invitation" data-palette="black">
-        <aside class="fixed-panel" aria-label="Informasi tetap undangan">
+    <main class="invitation is-closed" data-palette="black">
+        <div class="invitation-cover" id="invitation-cover" role="region" aria-label="Sampul undangan">
+            <div class="cover-mark" aria-hidden="true">
+                <svg class="graduation-cap" viewBox="0 0 48 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 12.5 24 3l22 9.5L24 22 2 12.5Z" fill="currentColor"/>
+                    <path d="M10 17v9c8.5 6 19.5 6 28 0v-9M45 13v13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="45" cy="29" r="2" fill="currentColor"/>
+                </svg>
+            </div>
+
+            <blockquote class="quote">
+                <p>“Ada bagian dari dirimu yang tertinggal di Jawa. Ada harapan yang pernah runtuh di Jogja. Lalu Tual tawarkan pulang, bukan sebagai jalan yang paling mudah, tetapi sebagai tempat di mana semesta akhirnya berkata, ‘Cukup, sekarang saatnya kamu sampai.’”</p>
+                <cite>— Anonim</cite>
+            </blockquote>
+
+            <button class="open-invitation" id="open-invitation" type="button" aria-controls="scroll-panel">
+                Buka Undangan
+            </button>
+        </div>
+
+        <aside class="fixed-panel" aria-label="Informasi tetap undangan" aria-hidden="true" inert>
             <h1 class="fixed-heading">Undangan Wisuda</h1>
 
             <div class="graduate-identity">
@@ -875,10 +993,10 @@
             <section class="countdown" aria-label="Hitung mundur acara">
                 <p class="countdown-title">Menuju acara</p>
                 <div class="countdown-grid" aria-live="off">
-                    <div><p class="countdown-value" id="days">--</p><p class="countdown-unit">Hari</p></div>
-                    <div><p class="countdown-value" id="hours">--</p><p class="countdown-unit">Jam</p></div>
-                    <div><p class="countdown-value" id="minutes">--</p><p class="countdown-unit">Menit</p></div>
-                    <div><p class="countdown-value" id="seconds">--</p><p class="countdown-unit">Detik</p></div>
+                    <div><p class="countdown-value" data-countdown="days" id="days">--</p><p class="countdown-unit">Hari</p></div>
+                    <div><p class="countdown-value" data-countdown="hours" id="hours">--</p><p class="countdown-unit">Jam</p></div>
+                    <div><p class="countdown-value" data-countdown="minutes" id="minutes">--</p><p class="countdown-unit">Menit</p></div>
+                    <div><p class="countdown-value" data-countdown="seconds" id="seconds">--</p><p class="countdown-unit">Detik</p></div>
                 </div>
             </section>
 
@@ -893,7 +1011,7 @@
             </div>
         </aside>
 
-        <section class="scroll-panel" aria-label="Isi undangan yang bergerak">
+        <section class="scroll-panel" id="scroll-panel" aria-label="Isi undangan yang bergerak" aria-hidden="true" inert>
             <div class="scroll-controls">
                 <button id="toggle-scroll-btn" type="button" aria-label="Gulir otomatis aktif" aria-pressed="true">
                     <span id="scroll-icon" class="scroll-icon"></span>
@@ -910,11 +1028,6 @@
                         <p>Kehadiran dan doa restu Bapak/Ibu/Saudara/i akan menjadi kebahagiaan bagi kami sekeluarga.</p>
                     </div>
                 </section>
-
-                <blockquote class="content-section quote">
-                    <p>“Ada bagian dari dirimu yang tertinggal di Jawa. Ada harapan yang pernah runtuh di Jogja. Lalu Tual tawarkan pulang, bukan sebagai jalan yang paling mudah, tetapi sebagai tempat di mana semesta akhirnya berkata, ‘Cukup, sekarang saatnya kamu sampai.’”</p>
-                    <cite>— Anonim</cite>
-                </blockquote>
 
                 <section class="content-section">
                     <span class="eyebrow">Waktu dan Tempat</span>
@@ -954,7 +1067,7 @@
             </button>
             <button class="theme-picker theme-toggle" id="theme-picker" type="button" aria-label="Ganti warna tema" data-palette="black"></button>
             <span class="theme-hint" id="theme-hint" aria-hidden="true">Ketuk bulatan untuk ganti tema</span>
-            <audio id="audio-player" src="assets/music/audio5.mp3" preload="auto" autoplay loop hidden>
+            <audio id="audio-player" src="assets/music/audio5.mp3" preload="auto" loop hidden>
                 Browser Anda tidak mendukung pemutar audio.
             </audio>
         </section>
@@ -1006,12 +1119,6 @@
             document.getElementById("guest-name").textContent = recipientName;
         }
 
-        if (!isAdminMode) {
-            window.setTimeout(() => {
-                document.getElementById("theme-hint").hidden = true;
-            }, 5000);
-        }
-
         const rsvpGuestName = recipientName || "tamu undangan";
         for (const rsvpLink of document.querySelectorAll("[data-rsvp]")) {
             const attendance = rsvpLink.dataset.rsvp === "hadir" ? "Saya akan hadir" : "Mohon maaf, saya tidak dapat hadir";
@@ -1023,8 +1130,12 @@
 
         const audioPlayer = document.getElementById("audio-player");
         const musicToggle = document.getElementById("music-toggle");
+        const invitationCover = document.getElementById("invitation-cover");
+        const openInvitationButton = document.getElementById("open-invitation");
+        const fixedPanel = document.querySelector(".fixed-panel");
+        const scrollPanel = document.getElementById("scroll-panel");
         let musicPausedByUser = false;
-        let autoplayBlocked = false;
+        let invitationOpened = false;
         const updateMusicToggle = () => {
             const isPlaying = !audioPlayer.paused;
             musicToggle.setAttribute("aria-pressed", String(isPlaying));
@@ -1037,16 +1148,46 @@
             updateMusicToggle();
         };
         const requestMusicPlayback = () => {
-            audioPlayer.play().then(() => {
-                autoplayBlocked = false;
-            }).catch((error) => {
-                autoplayBlocked = error.name === "NotAllowedError";
-                reportPlaybackError(error);
-            });
+            audioPlayer.play().catch(reportPlaybackError);
         };
 
         if (!isAdminMode) {
             musicToggle.hidden = false;
+
+            openInvitationButton.addEventListener("click", () => {
+                if (invitationPage.classList.contains("is-opening")) {
+                    return;
+                }
+
+                let openingFallback;
+                const finishOpening = (event) => {
+                    if (event && (event.target !== invitationCover || event.propertyName !== "transform")) {
+                        return;
+                    }
+                    if (invitationOpened) {
+                        return;
+                    }
+
+                    invitationOpened = true;
+                    invitationCover.removeEventListener("transitionend", finishOpening);
+                    window.clearTimeout(openingFallback);
+                    invitationCover.hidden = true;
+                    invitationPage.classList.remove("is-closed", "is-opening");
+                    fixedPanel.inert = false;
+                    fixedPanel.removeAttribute("aria-hidden");
+                    scrollPanel.inert = false;
+                    scrollPanel.removeAttribute("aria-hidden");
+                    window.setTimeout(() => {
+                        document.getElementById("theme-hint").hidden = true;
+                    }, 5000);
+                };
+                invitationCover.addEventListener("transitionend", finishOpening);
+                openingFallback = window.setTimeout(() => finishOpening(), 5200);
+                invitationPage.classList.add("is-opening");
+                if (!musicPausedByUser) {
+                    requestMusicPlayback();
+                }
+            });
 
             musicToggle.addEventListener("click", () => {
                 if (audioPlayer.paused) {
@@ -1059,26 +1200,9 @@
             });
             audioPlayer.addEventListener("play", updateMusicToggle);
             audioPlayer.addEventListener("pause", updateMusicToggle);
-            audioPlayer.addEventListener("playing", () => {
-                autoplayBlocked = false;
-            });
             audioPlayer.addEventListener("error", () => {
                 console.error("Musik undangan gagal dimuat:", audioPlayer.error);
             });
-
-            const resumeMusicAfterInteraction = (event) => {
-                document.removeEventListener("pointerdown", resumeMusicAfterInteraction, true);
-                document.removeEventListener("keydown", resumeMusicAfterInteraction, true);
-                if (event.target instanceof Element && event.target.closest("#music-toggle")) {
-                    return;
-                }
-                if (autoplayBlocked && !musicPausedByUser) {
-                    requestMusicPlayback();
-                }
-            };
-            document.addEventListener("pointerdown", resumeMusicAfterInteraction, true);
-            document.addEventListener("keydown", resumeMusicAfterInteraction, true);
-
         }
 
         const paletteColors = {
@@ -1137,7 +1261,6 @@
 
         if (!isAdminMode) {
             applyPalette(urlParams.get("warna") || "black");
-            requestMusicPlayback();
             themePicker.addEventListener("click", () => {
                 const currentIndex = paletteOrder.indexOf(themePicker.dataset.palette);
                 const nextPalette = paletteOrder[(currentIndex + 1) % paletteOrder.length];
@@ -1253,19 +1376,26 @@
 
         const eventTime = new Date("2026-11-12T12:00:00+09:00").getTime();
         const countdownElements = {
-            days: document.getElementById("days"),
-            hours: document.getElementById("hours"),
-            minutes: document.getElementById("minutes"),
-            seconds: document.getElementById("seconds")
+            days: document.querySelectorAll('[data-countdown="days"]'),
+            hours: document.querySelectorAll('[data-countdown="hours"]'),
+            minutes: document.querySelectorAll('[data-countdown="minutes"]'),
+            seconds: document.querySelectorAll('[data-countdown="seconds"]')
         };
 
         function updateCountdown() {
             const remaining = Math.max(0, eventTime - Date.now());
             const totalSeconds = Math.floor(remaining / 1000);
-            countdownElements.days.textContent = String(Math.floor(totalSeconds / 86400)).padStart(2, "0");
-            countdownElements.hours.textContent = String(Math.floor((totalSeconds % 86400) / 3600)).padStart(2, "0");
-            countdownElements.minutes.textContent = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
-            countdownElements.seconds.textContent = String(totalSeconds % 60).padStart(2, "0");
+            const values = {
+                days: String(Math.floor(totalSeconds / 86400)).padStart(2, "0"),
+                hours: String(Math.floor((totalSeconds % 86400) / 3600)).padStart(2, "0"),
+                minutes: String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0"),
+                seconds: String(totalSeconds % 60).padStart(2, "0")
+            };
+            for (const [unit, elements] of Object.entries(countdownElements)) {
+                for (const element of elements) {
+                    element.textContent = values[unit];
+                }
+            }
         }
         updateCountdown();
         window.setInterval(updateCountdown, 1000);
@@ -1280,7 +1410,7 @@
         let scrollRemainder = 0;
 
         function autoScrollStep() {
-            if (autoScrollActive && !userInteracting) {
+            if (invitationOpened && autoScrollActive && !userInteracting) {
                 scrollRemainder += 0.35;
                 const scrollAmount = Math.floor(scrollRemainder);
                 if (scrollAmount > 0) {
