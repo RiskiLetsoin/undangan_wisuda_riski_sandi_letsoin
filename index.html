@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#101f38">
+    <meta name="theme-color" content="#0c0c0c">
     <title>Undangan Wisuda Riski Sandi Letsoin, S.Kom</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -444,7 +444,7 @@
             overflow-y: auto;
             padding: clamp(48px, 7vh, 84px) clamp(14px, 4vw, 56px) 48px;
             background-color: var(--panel-background);
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.65'/%3E%3C/svg%3E");
             background-size: 120px 120px;
             background-blend-mode: soft-light;
             color: var(--text);
@@ -839,7 +839,7 @@
     </style>
 </head>
 <body>
-    <main class="invitation">
+    <main class="invitation" data-palette="black">
         <aside class="fixed-panel" aria-label="Informasi tetap undangan">
             <h1 class="fixed-heading">Undangan Wisuda</h1>
 
@@ -931,8 +931,8 @@
                 <svg class="music-note" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12.1a3.5 3.5 0 1 1-2-3.16V6.2l10-2.5v11.4a3.5 3.5 0 1 1-2-3.16V3.14L12 4.64z"/></svg>
                 <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>
             </button>
-            <button class="theme-picker theme-toggle" id="theme-picker" type="button" aria-label="Ganti warna tema" data-palette="navy"></button>
-            <audio id="audio-player" src="assets/music/audio1.mp3" preload="auto" loop hidden>
+            <button class="theme-picker theme-toggle" id="theme-picker" type="button" aria-label="Ganti warna tema" data-palette="black"></button>
+            <audio id="audio-player" src="assets/music/audio5.mp3" preload="auto" autoplay loop hidden>
                 Browser Anda tidak mendukung pemutar audio.
             </audio>
         </section>
@@ -950,13 +950,13 @@
                 <input id="public-invitation-url" name="public-url" type="url" placeholder="https://contoh.com/undangan/" required>
                 <span>Warna undangan tamu</span>
                 <div class="admin-palette-picker" id="guest-palette-picker" role="group" aria-label="Warna undangan tamu">
-                    <button class="palette-dot" type="button" data-palette="navy" aria-label="Biru navy gelap" aria-pressed="true"></button>
+                    <button class="palette-dot" type="button" data-palette="navy" aria-label="Biru navy gelap" aria-pressed="false"></button>
                     <button class="palette-dot" type="button" data-palette="hunter" aria-label="Green Hunter" aria-pressed="false"></button>
                     <button class="palette-dot" type="button" data-palette="gray" aria-label="Abu-abu" aria-pressed="false"></button>
                     <button class="palette-dot" type="button" data-palette="maroon" aria-label="Merah maron" aria-pressed="false"></button>
-                    <button class="palette-dot" type="button" data-palette="black" aria-label="Hitam" aria-pressed="false"></button>
+                    <button class="palette-dot" type="button" data-palette="black" aria-label="Hitam" aria-pressed="true"></button>
                 </div>
-                <input id="guest-palette" name="palette" type="hidden" value="navy">
+                <input id="guest-palette" name="palette" type="hidden" value="black">
                 <label for="guest-names">Nama tamu (satu nama per baris)</label>
                 <textarea id="guest-names" name="guest-names" rows="7" placeholder="Bapak/Ibu Keluarga Hasan&#10;Ibu Maria" required></textarea>
                 <button class="admin-button" type="submit">Buat tautan tamu</button>
@@ -1049,11 +1049,11 @@
             maroon: "assets/music/audio4.mp3",
             black: "assets/music/audio5.mp3"
         };
-        const paletteOrder = Object.keys(paletteColors);
+        const paletteOrder = ["black", "navy", "hunter", "gray", "maroon"];
         const themePicker = document.getElementById("theme-picker");
 
         function applyPalette(palette, updateAddress = false) {
-            const selectedPalette = Object.prototype.hasOwnProperty.call(paletteColors, palette) ? palette : "navy";
+            const selectedPalette = Object.prototype.hasOwnProperty.call(paletteColors, palette) ? palette : "black";
             const selectedAudio = new URL(paletteAudio[selectedPalette], document.baseURI).href;
             if (audioPlayer.src !== selectedAudio) {
                 audioPlayer.src = selectedAudio;
@@ -1083,7 +1083,7 @@
         }
 
         if (!isAdminMode) {
-            applyPalette(urlParams.get("warna") || "navy");
+            applyPalette(urlParams.get("warna") || "black");
             audioPlayer.play().catch(reportPlaybackError);
             themePicker.addEventListener("click", () => {
                 const currentIndex = paletteOrder.indexOf(themePicker.dataset.palette);
@@ -1141,7 +1141,7 @@
             for (const guestName of guestNames) {
                 const guestUrl = new URL(publicUrl.href);
                 guestUrl.searchParams.set("to", guestName);
-                if (guestPalette !== "navy") {
+                if (guestPalette !== "black") {
                     guestUrl.searchParams.set("warna", guestPalette);
                 }
 
