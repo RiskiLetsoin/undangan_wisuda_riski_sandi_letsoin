@@ -137,7 +137,12 @@
             position: relative;
             z-index: 1;
             border-right: 2px solid var(--line);
-            background: linear-gradient(150deg, var(--fixed-background), var(--panel-background));
+            background-color: var(--panel-background);
+            background-image:
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.9'/%3E%3C/svg%3E"),
+                linear-gradient(150deg, var(--fixed-background), var(--panel-background));
+            background-size: 120px 120px, auto;
+            background-blend-mode: soft-light, normal;
             color: var(--text);
             box-shadow:
                 0 8px 24px rgb(0 0 0 / 20%),
@@ -325,6 +330,22 @@
             height: 1px;
             background: var(--quiet);
             content: "";
+        }
+
+        .theme-hint {
+            position: absolute;
+            z-index: 3;
+            right: 62px;
+            bottom: 73px;
+            padding: 5px 8px;
+            border: 1px solid var(--control-border);
+            border-radius: 999px;
+            background: var(--control-background);
+            color: var(--text);
+            font-size: 9px;
+            line-height: 1.2;
+            white-space: nowrap;
+            pointer-events: none;
         }
 
         .theme-toggle {
@@ -932,6 +953,7 @@
                 <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>
             </button>
             <button class="theme-picker theme-toggle" id="theme-picker" type="button" aria-label="Ganti warna tema" data-palette="black"></button>
+            <span class="theme-hint" id="theme-hint" aria-hidden="true">Ketuk bulatan untuk ganti tema</span>
             <audio id="audio-player" src="assets/music/audio5.mp3" preload="auto" autoplay loop hidden>
                 Browser Anda tidak mendukung pemutar audio.
             </audio>
@@ -982,6 +1004,12 @@
         const recipientName = urlParams.get("to") || urlParams.get("nama") || urlParams.get("guest");
         if (recipientName && !isAdminMode) {
             document.getElementById("guest-name").textContent = recipientName;
+        }
+
+        if (!isAdminMode) {
+            window.setTimeout(() => {
+                document.getElementById("theme-hint").hidden = true;
+            }, 5000);
         }
 
         const rsvpGuestName = recipientName || "tamu undangan";
