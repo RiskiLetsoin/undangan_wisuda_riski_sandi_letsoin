@@ -912,8 +912,8 @@
                 </section>
 
                 <blockquote class="content-section quote">
-                    <p>“Pendidikan bukanlah persiapan untuk hidup; pendidikan adalah hidup itu sendiri.”</p>
-                    <cite>— John Dewey</cite>
+                    <p>“Ada bagian dari dirimu yang tertinggal di Jawa. Ada harapan yang pernah runtuh di Jogja. Lalu Tual tawarkan pulang, bukan sebagai jalan yang paling mudah, tetapi sebagai tempat di mana semesta akhirnya berkata, ‘Cukup, sekarang saatnya kamu sampai.’”</p>
+                    <cite>— Anonim</cite>
                 </blockquote>
 
                 <section class="content-section">
@@ -1024,6 +1024,7 @@
         const audioPlayer = document.getElementById("audio-player");
         const musicToggle = document.getElementById("music-toggle");
         let musicPausedByUser = false;
+        let autoplayBlocked = false;
         const updateMusicToggle = () => {
             const isPlaying = !audioPlayer.paused;
             musicToggle.setAttribute("aria-pressed", String(isPlaying));
@@ -1035,6 +1036,14 @@
             }
             updateMusicToggle();
         };
+        const requestMusicPlayback = () => {
+            audioPlayer.play().then(() => {
+                autoplayBlocked = false;
+            }).catch((error) => {
+                autoplayBlocked = error.name === "NotAllowedError";
+                reportPlaybackError(error);
+            });
+        };
 
         if (!isAdminMode) {
             musicToggle.hidden = false;
@@ -1042,7 +1051,7 @@
             musicToggle.addEventListener("click", () => {
                 if (audioPlayer.paused) {
                     musicPausedByUser = false;
-                    audioPlayer.play().catch(reportPlaybackError);
+                    requestMusicPlayback();
                 } else {
                     musicPausedByUser = true;
                     audioPlayer.pause();
@@ -1050,9 +1059,25 @@
             });
             audioPlayer.addEventListener("play", updateMusicToggle);
             audioPlayer.addEventListener("pause", updateMusicToggle);
+            audioPlayer.addEventListener("playing", () => {
+                autoplayBlocked = false;
+            });
             audioPlayer.addEventListener("error", () => {
                 console.error("Musik undangan gagal dimuat:", audioPlayer.error);
             });
+
+            const resumeMusicAfterInteraction = (event) => {
+                document.removeEventListener("pointerdown", resumeMusicAfterInteraction, true);
+                document.removeEventListener("keydown", resumeMusicAfterInteraction, true);
+                if (event.target instanceof Element && event.target.closest("#music-toggle")) {
+                    return;
+                }
+                if (autoplayBlocked && !musicPausedByUser) {
+                    requestMusicPlayback();
+                }
+            };
+            document.addEventListener("pointerdown", resumeMusicAfterInteraction, true);
+            document.addEventListener("keydown", resumeMusicAfterInteraction, true);
 
         }
 
@@ -1105,14 +1130,14 @@
                 }
                 window.history.replaceState(null, "", currentUrl);
                 if (!musicPausedByUser) {
-                    audioPlayer.play().catch(reportPlaybackError);
+                    requestMusicPlayback();
                 }
             }
         }
 
         if (!isAdminMode) {
             applyPalette(urlParams.get("warna") || "black");
-            audioPlayer.play().catch(reportPlaybackError);
+            requestMusicPlayback();
             themePicker.addEventListener("click", () => {
                 const currentIndex = paletteOrder.indexOf(themePicker.dataset.palette);
                 const nextPalette = paletteOrder[(currentIndex + 1) % paletteOrder.length];
