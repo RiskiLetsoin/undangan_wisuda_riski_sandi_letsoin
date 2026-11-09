@@ -1218,7 +1218,7 @@
                         </div>
                         <div class="event-item">
                             <p class="event-label">Waktu</p>
-                            <p class="event-value"><time datetime="12:00+09:00">12.00 WIT</time></p>
+                            <p class="event-value"><time datetime="01:00+09:00">01.00 WIT</time></p>
                         </div>
                         <div class="event-item">
                             <p class="event-label">Lokasi</p>
@@ -1575,7 +1575,7 @@
                     }
                 });
 
-                const message = `Bismillahirrahmanirrahim\nAssalamu’alaikum warahmatullahi wabarakatuh.\n\nYth. ${guestName},\n\nDengan penuh rasa syukur, kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara syukuran wisuda putra kami, Riski Sandi Letsoin, S.Kom.\n\nHari/Tanggal: Kamis, 12 November 2026\nWaktu: 12.00 WIT\nTempat: Desa Labetawi\n\nKehadiran dan doa restu Bapak/Ibu/Saudara/i akan menjadi kebahagiaan bagi kami sekeluarga.\n\nSilakan buka undangan melalui tautan berikut:\n${guestUrl.href}\n\nWassalamu’alaikum warahmatullahi wabarakatuh.\nAli Idrus Letsoin & Siti Naisa Rahantan`;
+                const message = `Bismillahirrahmanirrahim\nAssalamu’alaikum warahmatullahi wabarakatuh.\n\nYth. ${guestName},\n\nDengan penuh rasa syukur, kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara syukuran wisuda putra kami, Riski Sandi Letsoin, S.Kom.\n\nHari/Tanggal: Kamis, 12 November 2026\nWaktu: 01.00 WIT\nTempat: Desa Labetawi\n\nKehadiran dan doa restu Bapak/Ibu/Saudara/i akan menjadi kebahagiaan bagi kami sekeluarga.\n\nSilakan buka undangan melalui tautan berikut:\n${guestUrl.href}\n\nWassalamu’alaikum warahmatullahi wabarakatuh.\nAli Idrus Letsoin & Siti Naisa Rahantan`;
                 const whatsappLink = document.createElement("a");
                 whatsappLink.href = `https://wa.me/?text=${encodeURIComponent(message)}`;
                 whatsappLink.target = "_blank";
@@ -1591,7 +1591,7 @@
             guestLinkStatus.textContent = `${guestNames.length} tautan tamu berhasil dibuat.`;
         });
 
-        const eventTime = new Date("2026-11-12T12:00:00+09:00").getTime();
+        const eventTime = new Date("2026-11-12T01:00:00+09:00").getTime();
         const countdownElements = {
             days: document.querySelectorAll('[data-countdown="days"]'),
             hours: document.querySelectorAll('[data-countdown="hours"]'),
