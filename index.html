@@ -466,22 +466,12 @@
             bottom: 64px;
         }
 
-        .theme-picker::before {
-            position: absolute;
-            top: 50%;
-            right: calc(100% + 5px);
-            width: 12px;
-            height: 1px;
-            background: var(--quiet);
-            content: "";
-        }
-
         .theme-hint {
             position: absolute;
             z-index: 3;
-            right: 62px;
-            bottom: 73px;
-            padding: 5px 8px;
+            right: 64px;
+            bottom: 76px;
+            padding: 7px 10px;
             border: 1px solid var(--control-border);
             border-radius: 999px;
             background: var(--control-background);
@@ -490,17 +480,33 @@
             line-height: 1.2;
             white-space: nowrap;
             pointer-events: none;
+            box-shadow: 0 4px 14px rgb(0 0 0 / 16%);
         }
 
         .theme-toggle {
             display: block;
-            width: 34px;
-            height: 34px;
+            width: 36px;
+            height: 36px;
             padding: 0;
-            border: 2px solid var(--quiet);
+            border: 1px solid color-mix(in srgb, var(--text), transparent 35%);
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgb(0 0 0 / 22%);
+            box-shadow:
+                0 0 0 4px var(--control-background),
+                0 3px 12px rgb(0 0 0 / 22%);
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.08);
+            box-shadow:
+                0 0 0 4px var(--control-background),
+                0 5px 16px rgb(0 0 0 / 28%);
+        }
+
+        .theme-toggle:focus-visible {
+            outline: 2px solid var(--text);
+            outline-offset: 6px;
         }
 
         .theme-toggle[data-palette="navy"] {
@@ -1264,7 +1270,7 @@
                 <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>
             </button>
             <button class="theme-picker theme-toggle" id="theme-picker" type="button" aria-label="Ganti warna tema" data-palette="black"></button>
-            <span class="theme-hint" id="theme-hint" aria-hidden="true">Ketuk bulatan untuk ganti tema</span>
+            <span class="theme-hint" id="theme-hint" aria-hidden="true" hidden>Ketuk bulatan untuk ganti tema</span>
             <audio id="audio-player" src="assets/music/audio5.mp3" preload="none" loop hidden>
                 Browser Anda tidak mendukung pemutar audio.
             </audio>
@@ -1370,8 +1376,12 @@
                     scrollPanel.inert = false;
                     scrollPanel.removeAttribute("aria-hidden");
                     window.setTimeout(() => {
-                        document.getElementById("theme-hint").hidden = true;
-                    }, 5000);
+                        const themeHint = document.getElementById("theme-hint");
+                        themeHint.hidden = false;
+                        window.setTimeout(() => {
+                            themeHint.hidden = true;
+                        }, 10000);
+                    }, 7 * 60 * 1000);
                 };
                 invitationCover.addEventListener("transitionend", finishOpening);
                 openingFallback = window.setTimeout(() => finishOpening(), 5200);
